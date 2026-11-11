@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ArrowDownLeft, ArrowUpRight, ChartNoAxesCombined, ChevronRight, CircleHelp, CreditCard, Landmark, LayoutDashboard, Search, Sparkles, Wallet, X } from 'lucide-react';
 import { money, summarize, type DashboardData } from '../shared/finance';
@@ -13,10 +13,14 @@ export function App() {
   const [customEnd, setCustomEnd] = useState('2026-11-10');
   const [info, setInfo] = useState(false);
   const [reload, setReload] = useState(0);
+  const installDialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const controller = new AbortController();
-    fetch('/api/demo/dashboard', { signal: controller.signal })
-      .then(r => { if (!r.ok) throw new Error('The demo API is unavailable. Start both services with npm run dev.'); return r.json(); })
+    const endpoint = import.meta.env.MODE === 'pages'
+      ? `${import.meta.env.BASE_URL}demo/dashboard.json`
+      : '/api/demo/dashboard';
+    fetch(endpoint, { signal: controller.signal, cache: 'no-store' })
+      .then(r => { if (!r.ok) throw new Error('The sample dashboard could not load. Check your connection and try again.'); return r.json(); })
       .then((result: DashboardData) => { setData(result); setError(''); })
       .catch((e: Error) => { if (e.name !== 'AbortError') setError(e.message); });
     return () => controller.abort();
@@ -54,7 +58,7 @@ export function App() {
       <div className="sidebar-bottom"><div className="private-icon"><Wallet size={19} /></div><strong>A little more clarity.</strong><p>One place for your income,<br />spending, and what's next.</p><button onClick={() => setInfo(true)}><CircleHelp size={16} />About this demo</button></div>
     </aside>
     <main id="overview">
-      <header className="topbar"><span>Workspace <ChevronRight size={14} /> <strong>Overview</strong></span><span className="demo-pill"><span />Demo workspace</span></header>
+      <header className="topbar"><span>Workspace <ChevronRight size={14} /> <strong>Overview</strong></span><span className="topbar-actions"><button className="install-trigger" onClick={() => installDialog.current?.showModal()}>Install app</button><span className="demo-pill"><span />Demo workspace</span></span></header>
       <div className="content">
         <div className="page-heading"><div><p className="eyebrow">YOUR MONEY, AT A GLANCE</p><h1>A clearer picture.</h1><p>Know where you stand. Make room for what's next.</p></div><button className="outline-button" onClick={() => setInfo(true)}><Landmark size={16} />Manage connections</button></div>
         <div className="demo-banner"><Sparkles size={18} /><span><strong>A preview of your finances.</strong> All figures are fictional. No bank or Outlier account is connected.</span><button onClick={() => setInfo(true)}>Learn more <ArrowUpRight size={14} /></button></div>
@@ -82,6 +86,13 @@ export function App() {
       </div>
     </main>
     {info && <div className="modal-backdrop" onClick={() => setInfo(false)}><section className="modal" role="dialog" aria-modal="true" aria-labelledby="info-title" onClick={e => e.stopPropagation()} onKeyDown={e => { if (e.key === 'Escape') setInfo(false); }}><button autoFocus className="close" aria-label="Close" onClick={() => setInfo(false)}><X size={20} /></button><Landmark size={28} /><h2 id="info-title">Your connections, clearly labeled.</h2><p>This workspace contains fictional data only. Synovus and Outlier are not connected.</p><ul><li><strong>Synovus:</strong> current Plaid institution support, product access, pricing, and production authorization still need verification.</li><li><strong>Outlier:</strong> no authorized contributor earnings API has been verified. No scraping or browser automation is enabled.</li><li><strong>Before real data:</strong> implement authentication, encrypted token storage, and secure connection controls.</li></ul><p>Available balance is a bank snapshot. Projected balance includes unpaid earnings and is not spendable cash.</p><button className="primary-button" onClick={() => setInfo(false)}>Back to overview</button></section></div>}
+    <dialog className="install-dialog" ref={installDialog} aria-labelledby="install-title">
+      <form method="dialog"><button className="close" aria-label="Close install instructions"><X size={20} /></button></form>
+      <Wallet size={28} /><h2 id="install-title">Keep Ledger on your Home Screen.</h2>
+      <p>On your iPhone:</p><ol><li>Open this website in <strong>Safari</strong>.</li><li>Tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>.</li><li>Keep <strong>Open as Web App</strong> enabled if shown, then tap <strong>Add</strong>.</li></ol>
+      <p>On Android, open the browser menu and choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</p>
+      <p>The app uses sample data and needs an internet connection. Your computer does not need to stay on once the website is hosted.</p>
+    </dialog>
   </div>;
 }
 

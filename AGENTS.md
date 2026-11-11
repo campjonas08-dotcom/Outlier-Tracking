@@ -13,6 +13,7 @@ Use the existing checkout. Cloud tasks already have isolation; do not create a w
 - React/TypeScript + Vite + Tailwind + Recharts in `src`; Node/Express in `server`.
 - Shared domain logic is framework-independent in `shared`. Strict TypeScript, descriptive names, USD integer cents. Check integer safety and avoid float arithmetic for accounting.
 - `server/demo.ts` is explicitly fictional. `/api/demo/dashboard` must never return real data. Live routes do not exist.
+- `npm run build:pages` exports a standalone synthetic website under `/Outlier-Tracking/`. `.github/workflows/website.yml` deploys it using official Pages actions. Read `docs/HOSTING.md`; Pages activation is a repository-admin setting. Never export real records into the static fixture or `public/`. The manifest/icons support phone Home Screen use; no offline cache is installed.
 - `db/schema.sql` is proposed SQLite design only. Do not imply persistence exists until migrations and storage are implemented/tested. PostgreSQL/Supabase is optional later.
 - Income adapters implement `IncomeProvider`, declare missing capabilities, and fail closed when unsupported. No scraping, private API guessing, or session-cookie harvesting.
 - Keep earnings, payouts, deposits, and available balances distinct. Cash flow uses posted deposits minus expenses net of refunds; transfers and pending transactions are excluded. Awaiting payment is an all-time stock as of snapshot, independent of the selected period.

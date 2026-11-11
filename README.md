@@ -2,6 +2,12 @@
 
 A local-first personal finance foundation for comparing Outlier earnings with Synovus bank activity. **This version is a synthetic demo. No accounts are connected.** It does not accept banking credentials or real financial data.
 
+## Use as a website or phone app
+
+The sample dashboard is prepared for GitHub Pages with automatic deployment and iPhone **Add to Home Screen** support. Hosting must be enabled in the repository before the website becomes available. See [hosting and phone installation](docs/HOSTING.md) for the activation steps and website address. Once deployed, your computer does not need to stay on.
+
+The public website contains fictional data only. It requires Internet access; no offline financial cache or live backend is hosted on Pages.
+
 ## Start locally (Windows, macOS, Linux)
 
 Install [Node.js 24 LTS](https://nodejs.org/) and Git. In PowerShell or a terminal:
@@ -54,7 +60,7 @@ Next: verify official access and costs; implement authentication and secure stor
 
 ## Privacy and security boundary
 
-The public demo route contains fictional data only. Do not replace the fixture with actual bank records. Secrets stay server-side; `VITE_*` variables are public. `.env`, local databases, logs, and generated builds are ignored. Never send passwords or tokens through chat, issues, commits, or CI logs. Do not expose this demo on a public interface or deploy it to GitHub Pages as a live banking app. Authentication, token encryption, webhook validation, account revocation, deletion, and least-privilege storage must be implemented and tested before enabling real data. No service worker caches financial responses.
+The public demo route contains fictional data only. Do not replace the fixture with actual bank records. Secrets stay server-side; `VITE_*` variables are public. `.env`, local databases, logs, and generated builds are ignored. Never send passwords or tokens through chat, issues, commits, or CI logs. GitHub Pages hosts only the synthetic sample frontend; it must never host actual financial records or be presented as a live banking app. Authentication, token encryption, webhook validation, account revocation, deletion, and least-privilege storage must be implemented and tested before enabling real data. No service worker caches financial responses.
 
 There is no saved-state storage yet: filters reset on reload and all data comes from the fixture. The schema is a design starting point, not a migration engine. Windows and iPhone browser compatibility require testing on those devices; Linux build/API checks do not establish native-device validation.
 
